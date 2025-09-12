@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "SMN_tools"
+version = "0.1.0"
+description = "Herramientas para extraer variables de modelos SENAMHI"
+authors = [
+    { name = "Japq", email = "japaredesq@gmail.com" }
+]
+
+dependencies = [
+    "xarray",
+    "cfgrib",
+    "numpy",
+    "netCDF4",
+    "h5netcdf"
+]
+
+requires-python = ">=3.9"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
