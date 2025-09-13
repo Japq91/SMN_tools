@@ -8,4 +8,5 @@ script/.venv/
 __pycache__/
 *.pyc
 *.pyo
-
+# Ignorar carpeta de pruebas
+script/prueba/
