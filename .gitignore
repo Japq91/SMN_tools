@@ -1,0 +1,11 @@
+data/
+cfgrib_cache/
+# Ignorar carpeta "antes" dentro del paquete
+src/SMN_tools/antes/
+# Ignorar entornos virtuales
+script/.venv/
+# Ignorar caches y compilados
+__pycache__/
+*.pyc
+*.pyo
+
