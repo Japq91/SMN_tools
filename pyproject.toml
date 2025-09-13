@@ -5,19 +5,22 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "SMN_tools"
 version = "0.1.0"
-description = "Herramientas para extraer variables de modelos SENAMHI"
+description = "Herramientas para procesamiento de modelos ETA/WRF y NetCDF"
 authors = [
     { name = "Japq", email = "japaredesq@gmail.com" }
 ]
 
+#
 dependencies = [
-    "xarray",
-    "cfgrib",
-    "numpy",
-    "netCDF4",
-    "h5netcdf"
+    "xarray==2025.9.0",
+    "cfgrib==0.9.15.0",
+    "numpy==2.3.3",
+    "netCDF4==1.7.2",
+    "h5netcdf==1.6.4",
 ]
-
+#
+readme = "README.md"
+license = { text = "MIT" }
 requires-python = ">=3.9"
 
 [tool.setuptools.packages.find]

@@ -59,44 +59,41 @@ git clone https://github.com/usuario/SMN_tools.git
 cd SMN_tools
 pip install -e .
 ```
-
 ---
 
 ##  Detalle de scripts principales
 
-### 1. **ETA\_extrae.py**
+### 1. Extracción de variables: `ETA_extrae.py` y `WRF_extrae.py`
 
-* Función: `extrac_ETA(out_path, gribfile, tipo)`
-* Extrae variables atmosféricas de archivos **GRIB ETA**:
+Los scripts **`ETA_extrae.py`** y **`WRF_extrae.py`** contienen las funciones principales para la **extracción de variables meteorológicas desde archivos GRIB** generados por los modelos **ETA** y **WRF**.  
+Ambos convierten las variables en **archivos NetCDF individuales por variable y paso temporal**, facilitando el procesamiento y análisis posterior.
 
-  * Precipitación (`tp`)
-  * Viento en niveles isobáricos (`level_vars`: u, v en 925, 850, 500, 200 hPa)
-  * Presión reducida al nivel del mar (`mslp`)
-  * Viento a 10 m (`wind10m`: u10, v10)
-  * Temperatura a 2 m (`t2m`)
-  * Humedad relativa a 2 m (`r2m`)
-  * Radiación de onda corta descendente (`ssrd`)
-* Genera archivos NetCDF individuales por variable y paso temporal.
+- **Función ETA**: `extrac_ETA(out_path, gribfile, tipo)`  
+- **Función WRF**: `extrac_WRF(out_path, gribfile, tipo)`  
 
----
+#### Variables soportadas
 
-### 2. **WRF\_extrae.py**
+- **Comunes a ambos modelos**
+  - Precipitación acumulada (`tp`)
+  - Viento en niveles isobáricos (`level_vars`: u, v en 925, 850, 500, 200 hPa)
+  - Presión al nivel del mar (`mslp`)
+  - Viento a 10 m (`wind10m`: u10, v10 / `10u`, `10v`)
+  - Temperatura a 2 m (`t2m`)
+  - Humedad relativa a 2 m (`r2m`)
 
-* Función: `extrac_WRF(out_path, gribfile, tipo)`
-* Procesa salidas **WRF GRIB** y extrae variables:
+- **Específicas de ETA**
+  - Radiación de onda corta descendente (`ssrd`)
 
-  * Precipitación acumulada (`tp`)
-  * Vientos, temperatura, humedad relativa y geopotencial en niveles (`level_vars`)
-  * Presión al nivel del mar (`mslp`)
-  * Viento a 10 m (`10u`, `10v`)
-  * Temperatura a 2 m (`t2m`)
-  * Temperatura de rocío a 2 m (`d2m`)
-  * Humedad relativa a 2 m (`r2m`)
-* Incluye función auxiliar `make_structured()` para reorganizar datasets en grillas regulares (lat/lon, opcional z).
+- **Específicas de WRF**
+  - Temperatura de rocío a 2 m (`d2m`)
+  - Geopotencial en niveles (`gh`)
 
----
+#### Funciones adicionales
 
-### 3. **procesa\_netcdf.py**
+- `WRF_extrae.py` incluye la función auxiliar **`make_structured()`**, que reorganiza los datasets en grillas regulares con coordenadas únicas de latitud y longitud, y opcionalmente un eje vertical (`z`), asegurando compatibilidad para análisis posteriores.
+
+
+### 2. **procesa\_netcdf.py**
 
 * Función: `process_netcdf_files(list_files, prefix_out, new_dims)`
 * **Objetivo**:
@@ -109,7 +106,15 @@ pip install -e .
 
   * Superficie: `["time","lat","lon"]`
   * Niveles: `["time","lev","lat","lon"]`.
+---
 
+### 3. **rename\_clean.py**
+
+* Función: `rename_and_clean(input_file, output_file, var_name_out, dims_out)`
+* Renombra dimensiones y variables para uniformizar productos NetCDF.
+* Elimina coordenadas innecesarias (`valid_time`, `forecast_reference_time`).
+* Configura compresión (`zlib`).
+* Retorna un dataset limpio listo para concatenación o fusión.
 ---
 
 ### 4. **merge\_netcdf.py**
@@ -118,28 +123,16 @@ pip install -e .
 * Une múltiples archivos NetCDF procesados en un solo producto.
 * Añade metadatos globales compatibles con CF-1.8 (`institution`, `source`, `history`, `references`).
 * Comprime variables con `zlib`.
-
 ---
 
-### 5. **rename\_clean.py**
-
-* Función: `rename_and_clean(input_file, output_file, var_name_out, dims_out)`
-* Renombra dimensiones y variables para uniformizar productos NetCDF.
-* Elimina coordenadas innecesarias (`valid_time`, `forecast_reference_time`).
-* Configura compresión (`zlib`).
-* Retorna un dataset limpio listo para concatenación o fusión.
-
----
-
-### 6. **delete\_files.py**
+### 5. **delete\_files.py**
 
 * Función: `clean_outdir(outdir)`
 * Elimina todos los archivos `.nc` de un directorio de salida.
 * Útil para limpiar corridas anteriores antes de procesar nuevas.
-
 ---
 
-### 7. ****init**.py**
+### 6. ****init**.py**
 
 Expone las funciones principales del paquete:
 

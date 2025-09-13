@@ -20,7 +20,7 @@ os.environ["GRIB_INDEX_DIR"] = cache_dir
 #r0 = '/scratch/Datatemporal/SMN/data/regional' # Ruta de datos iniciales por modelo
 r0 = '/home/jonathan/personal/e4/SMN_tools/data'
 #
-model = "PERU_WRF22" # "PERU_WRF22" #"PERU_ETA22" #"PERU_WRF22"
+model = "PERU_ETA22" # "PERU_WRF22" #"PERU_ETA22" #"PERU_WRF22"
 hor = "06"
 dia = "01"
 mes = "01"
