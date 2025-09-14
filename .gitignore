@@ -1,4 +1,4 @@
-data/
+#data/
 cfgrib_cache/
 lista
 # Ignorar carpeta "antes" dentro del paquete
