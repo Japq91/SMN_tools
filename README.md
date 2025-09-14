@@ -55,7 +55,7 @@ SMN\_tools/
 Clonar el repositorio e instalar en modo editable:
 
 ```bash
-git clone https://github.com/usuario/SMN_tools.git
+git clone https://github.com/Japq91/SMN_tools.git
 cd SMN_tools
 pip install -e .
 ```
@@ -149,6 +149,9 @@ from .delete_files import clean_outdir
 
 ##  Flujo de trabajo
 
+El flujo de trabajo completo está ejemplificado en [`script/test_extrac.py`](script/test_extrac.py).  
+Consta de **cuatro etapas principales**, que van desde la preparación de la corrida hasta la generación de archivos NetCDF finales de superficie (`sfc`) y niveles (`prs`).
+
 1. **Definir modelo, fecha y carpeta de salida**
 2. **Extraer variables ETA/WRF en NetCDF individuales**
 3. **Procesar y concatenar archivos por variable**
@@ -156,24 +159,91 @@ from .delete_files import clean_outdir
 
 Ejemplo resumido:
 
+---
+
+#### 1. Definir modelo, fecha y carpeta de salida
+Se configura el modelo a usar (`PERU_ETA22` o `PERU_WRF22`), así como fecha y hora de la corrida.  
+Además, se prepara la carpeta de salida y se limpian archivos `.nc` de corridas anteriores:
+
 ```python
-from SMN_tools import extrac_WRF, process_netcdf_files, merge_files, clean_outdir
+model = "PERU_ETA22"   # o "PERU_WRF22"
+hor, dia, mes, yea = "06", "01", "01", "2025"
 
-# 1. Limpieza
-clean_outdir("out/")
-
-# 2. Extracción desde GRIB
-extrac_WRF("out/", "WRFPRS_d01.00", tipo=["wind10m","t2m","mslp"])
-
-# 3. Procesamiento (unificar tiempos y renombrar dims)
-process_netcdf_files(["out/10u_000.nc","out/10v_000.nc"], prefix_out="sfc", new_dims=["time","lat","lon"])
-
-# 4. Fusión en archivo final
-merge_files(["out/sfc_tmp_10u.nc","out/sfc_tmp_10v.nc"], "out/WRF_20250101_sfc.nc")
+outdir = f"/ruta/out/{model}"
+os.system(f'mkdir -p {outdir}')
+clean_outdir(outdir)   # elimina archivos previos
 ```
 
-Salida final: `WRF_20250101_sfc.nc` y/o `WRF_20250101_prs.nc` listos para análisis.
+---
 
+#### 2. Extraer variables ETA/WRF en NetCDF individuales
+
+Dependiendo del modelo, se seleccionan archivos GRIB y se extraen las variables solicitadas.
+Ejemplo para ETA:
+
+```python
+tipos = ['tp','level_vars','wind10m','t2m','r2m','ssrd','mslp']
+
+for file_p in files_prono:
+    if "ETA" in model: extrac_ETA(outdir, file_p, tipos)
+    if "WRF" in model: extrac_WRF(outdir, file_p, tipos)
+```
+
+Cada variable se guarda como un archivo NetCDF independiente en la carpeta de salida, con su respectivo timestamp.
+
+---
+
+#### 3. Procesar y concatenar archivos por variable
+
+Una vez extraídas, las variables deben estandarizarse en dimensiones y concatenarse en el tiempo.
+
+* Para **superficie** (`sfc`): se usan dimensiones `["time","lat","lon"]`.
+* Para **niveles de presión** (`prs`): se usan dimensiones `["time","lev","lat","lon"]`.
+
+```python
+for var_in in ['prs','sfc']:
+    if var_in == 'prs':
+        nueva_lista = ['u','v']   # variables en niveles
+        new_dims0 = ["time","lev","lat","lon"]
+    else:
+        nueva_lista = ['tp','10u','10v','t2m','r2m','mslp','ssrd']
+        new_dims0 = ["time","lat","lon"]
+
+    for var in nueva_lista:
+        files_vars = gb(f'{outdir}/{var}_*')
+        process_netcdf_files(files_vars, prefix_out=var_in, new_dims=new_dims0)
+```
+
+Esto produce archivos intermedios con prefijo `sfc_tmp_` o `prs_tmp_`.
+
+---
+
+#### 4. Unir variables de superficie o niveles en un archivo final
+
+Finalmente, todas las variables de superficie (`sfc`) o niveles (`prs`) se combinan en un único NetCDF comprimido con metadatos CF-1.8:
+
+```python
+for var_in in ['prs','sfc']:
+    files_variables = gb(f"{outdir}/{var_in}_*")
+    if len(files_variables) == 0: continue
+
+    final_name = f"{model}_{yea}{mes}{dia}{hor}_{var_in}.nc"
+    out_file = os.path.join(run_dir, final_name)
+
+    merge_files(files_variables, out_file)
+```
+
+---
+
+#### Salida final
+
+* `PERU_ETA22_2025010106_sfc.nc`
+* `PERU_ETA22_2025010106_prs.nc`
+
+o, en el caso de WRF:
+
+* `PERU_WRF22_2025010106_sfc.nc`
+* `PERU_WRF22_2025010106_prs.nc`
 ---
 
 ## Licencia
