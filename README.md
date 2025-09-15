@@ -132,7 +132,7 @@ Ambos convierten las variables en **archivos NetCDF individuales por variable y 
 * Útil para limpiar corridas anteriores antes de procesar nuevas.
 ---
 
-### 6. ****init**.py**
+### 6. **\_\_init\_\_.py**
 
 Expone las funciones principales del paquete:
 
