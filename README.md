@@ -28,23 +28,23 @@ Dependencias adicionales incluidas en `requirements.txt`:
 
 ```
 
-SMN\_tools/
+SMN_tools/
 ├── pyproject.toml        # Configuración PEP 621 (paquete y dependencias)
 ├── requirements.txt      # Dependencias congeladas
 ├── setup.py              # Instalación alternativa
 ├── script/
-│   └── test\_extrac.py    # Ejemplo completo de flujo de trabajo
+│   └── test_extrac.py    # Ejemplo completo de flujo de trabajo
 ├── src/
-│   └── SMN\_tools/        # Código fuente
-│       ├── ETA\_extrae.py     # Extracción ETA
-│       ├── WRF\_extrae.py     # Extracción WRF
-│       ├── procesa\_netcdf.py # Procesamiento de NetCDF
-│       ├── merge\_netcdf.py   # Fusión de variables
-│       ├── rename\_clean.py   # Estandarización de variables/dimensiones
-│       ├── delete\_files.py   # Limpieza de directorios
-│       ├── **init**.py       # API pública del paquete
-│       └── **main**.py       # Punto de entrada
-└── SMN\_tools.egg-info/   # Metadatos de instalación
+│   └── SMN_tools/        # Código fuente
+│       ├── ETA_extrae.py     # Extracción ETA
+│       ├── WRF_extrae.py     # Extracción WRF
+│       ├── procesa_netcdf.py # Procesamiento de NetCDF
+│       ├── merge_netcdf.py   # Fusión de variables
+│       ├── rename_clean.py   # Estandarización de variables/dimensiones
+│       ├── delete_files.py   # Limpieza de directorios
+│       ├── __init__.py       # API pública del paquete
+│       └── __main__.py       # Punto de entrada # desactualizado
+└── SMN_tools.egg-info/   # Metadatos de instalación
 
 ```
 
