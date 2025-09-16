@@ -1,3 +1,4 @@
+README.md
 pyproject.toml
 setup.py
 src/SMN_tools/ETA_extrae.py
@@ -13,11 +14,3 @@ src/SMN_tools.egg-info/SOURCES.txt
 src/SMN_tools.egg-info/dependency_links.txt
 src/SMN_tools.egg-info/requires.txt
 src/SMN_tools.egg-info/top_level.txt
-src/SMN_tools/antes/extrae.py
-src/SMN_tools/antes/rename_clean.py
-src/SMN_tools/antes/test_procesa.py
-src/SMN_tools/antes/v0_extrae.py
-src/SMN_tools/antes/v0_rename_clean.py
-src/SMN_tools/antes/v1_extrae.py
-src/SMN_tools/antes/v1_procesa_netcdf.py
-src/SMN_tools/antes/v2_extrae.py

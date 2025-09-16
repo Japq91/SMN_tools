@@ -1,41 +1,30 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import pandas as pd
-import re
-import numpy as np
-import xarray as xr
 import os
-#
+import re
+import pandas as pd
 import numpy as np
 import xarray as xr
 
+#
 def make_structured(dataset, var_name, coord_lat='latitude', coord_lon='longitude', coord_z=None):
     """
     Reorganiza un dataset para que las coordenadas de latitud y longitud sean únicas. 
     Si la variable contiene una dimensión vertical (e.g., presión), la reorganiza en 3D (z, lat, lon). 
     Si no, en 2D (lat, lon).
-    
     También se asegura de que las coordenadas de tiempo (time) y tiempo válido (valid_time) se incluyan.
-    
-    Parámetros
     ----------
-    dataset : xr.Dataset
-        Dataset que contiene la variable a reorganizar.
-    var_name : str
-        Nombre de la variable dentro del dataset a reorganizar.
-    coord_lat : str, opcional
-        Nombre de la coordenada de latitud (default: 'latitude').
-    coord_lon : str, opcional
-        Nombre de la coordenada de longitud (default: 'longitude').
-    coord_z : str, opcional
-        Nombre de la coordenada vertical (e.g., presión). Si no se proporciona, se reorganiza en 2D.
-    
-    Retorna
+    Parámetros:    
+    dataset : xr.Dataset        Dataset que contiene la variable a reorganizar.
+    var_name : str        Nombre de la variable dentro del dataset a reorganizar.
+    coord_lat : str, opcional        Nombre de la coordenada de latitud (default: 'latitude').
+    coord_lon : str, opcional        Nombre de la coordenada de longitud (default: 'longitude').
+    coord_z : str, opcional        Nombre de la coordenada vertical (e.g., presión).
     -------
-    xr.Dataset
-        Dataset reorganizado con coordenadas únicas de latitud y longitud. 
-        En 3D si hay un eje z, en 2D si no.
+    Retorna:    
+    xr.Dataset        Dataset reorganizado con coordenadas únicas de latitud y longitud. 
+                      En 3D si hay un eje z, en 2D si no.
     """
 
     # Coordenadas únicas
@@ -57,15 +46,12 @@ def make_structured(dataset, var_name, coord_lat='latitude', coord_lon='longitud
 
     # Reorganizar variable
     var_reshaped = var.reshape(shape)
-
     # Construir nuevo dataset
     nuevo_dataset = xr.Dataset({var_name: (dims, var_reshaped)}, coords=coords)
-
     # Mantener coordenadas de tiempo si existen
     for t_coord in ['time', 'valid_time']:
         if t_coord in dataset.coords:
             nuevo_dataset = nuevo_dataset.assign_coords({t_coord: dataset[t_coord].values})
-
     return nuevo_dataset
 
 #
@@ -83,8 +69,8 @@ def extrac_WRF(out_path, gribfile, tipo):
       - 't2m'         : temperatura a 2 m
       - 'd2m'         : dew point a 2 m
       - 'r2m'         : humedad relativa a 2 m
-    Parámetros:
     -----------
+    Parámetros:
     out_path : str        Carpeta de salida
     gribfile : str        Archivo GRIB (ejemplo: 'WRFPRS_d01.00')
     tipo : list        Variables a extraer. Ejemplo: ['pr','wind10m','t2m']
@@ -107,6 +93,7 @@ def extrac_WRF(out_path, gribfile, tipo):
             decode_timedelta=False)
         if valid_time is not None: ds = ds.expand_dims(time=[valid_time])
         ds = make_structured(ds, var_name=list(ds.data_vars)[0])
+        ds['tp'].attrs['GRIB_typeOfLevel'] = 'surface'
         ds.to_netcdf(f"{out_path}/tp_{hfp}.nc")
 
     # --- Variables en niveles ---
@@ -117,28 +104,29 @@ def extrac_WRF(out_path, gribfile, tipo):
                 backend_kwargs={'filter_by_keys': {'shortName': var, 'typeOfLevel':'isobaricInhPa'}, 'indexpath': ''},
                 decode_timedelta=False)
             if valid_time is not None: ds = ds.expand_dims(time=[valid_time])
-            ds = make_structured(ds, var_name=list(ds.data_vars)[0], coord_z='isobaricInhPa')
-            ds.sel(isobaricInhPa=niveles_deseados, method='nearest')\
-              .to_netcdf(f"{out_path}/{var}_{hfp}.nc")
+            ds = make_structured(ds, var_name=list(ds.data_vars)[0], coord_z='isobaricInhPa')            
+            ds.sel(isobaricInhPa=niveles_deseados, method='nearest').to_netcdf(f"{out_path}/{var}_{hfp}.nc")
 
     # --- MSLP ---
-    if 'mslp' in tipo:
+    if 'prmsl' in tipo:
         ds = xr.open_dataset(gribfile, engine="cfgrib",
             backend_kwargs={'filter_by_keys': {'shortName':'mslet','typeOfLevel':'meanSea'}, 'indexpath': ''},
             decode_timedelta=False)
         if valid_time is not None: ds = ds.expand_dims(time=[valid_time])
         ds = make_structured(ds, var_name=list(ds.data_vars)[0])
-        ds.to_netcdf(f"{out_path}/mslp_{hfp}.nc")
+        ds[list(ds.data_vars)[0]].attrs['GRIB_typeOfLevel'] = 'surface'
+        ds.to_netcdf(f"{out_path}/prmsl_{hfp}.nc")
 
     # --- Viento 10m ---
     if 'wind10m' in tipo:
-        for var in ['10u','10v']:
+        for var in ['u','v']:
             ds = xr.open_dataset(gribfile, engine="cfgrib",
-                backend_kwargs={'filter_by_keys': {'shortName': var, 'typeOfLevel':'heightAboveGround','level':10}, 'indexpath': ''},
+                backend_kwargs={'filter_by_keys': {'shortName': '10%s'%var, 'typeOfLevel':'heightAboveGround','level':10}, 'indexpath': ''},
                 decode_timedelta=False)
             if valid_time is not None: ds = ds.expand_dims(time=[valid_time])
             ds = make_structured(ds, var_name=list(ds.data_vars)[0])
-            ds.to_netcdf(f"{out_path}/{var}_{hfp}.nc")
+            ds[list(ds.data_vars)[0]].attrs['GRIB_typeOfLevel'] = 'surface'
+            ds.to_netcdf(f"{out_path}/{var}10_{hfp}.nc")
 
     # --- Temperatura 2m ---
     if 't2m' in tipo:
@@ -147,6 +135,7 @@ def extrac_WRF(out_path, gribfile, tipo):
             decode_timedelta=False)
         if valid_time is not None: ds = ds.expand_dims(time=[valid_time])
         ds = make_structured(ds, var_name=list(ds.data_vars)[0])
+        ds[list(ds.data_vars)[0]].attrs['GRIB_typeOfLevel'] = 'surface'
         ds.to_netcdf(f"{out_path}/t2m_{hfp}.nc")
 
     # --- Dew Point 2m ---
@@ -156,6 +145,7 @@ def extrac_WRF(out_path, gribfile, tipo):
             decode_timedelta=False)
         if valid_time is not None: ds = ds.expand_dims(time=[valid_time])
         ds = make_structured(ds, var_name=list(ds.data_vars)[0])
+        ds[list(ds.data_vars)[0]].attrs['GRIB_typeOfLevel'] = 'surface'     
         ds.to_netcdf(f"{out_path}/d2m_{hfp}.nc")
 
     # --- Humedad relativa 2m ---
@@ -165,7 +155,7 @@ def extrac_WRF(out_path, gribfile, tipo):
             decode_timedelta=False)
         if valid_time is not None: ds = ds.expand_dims(time=[valid_time])
         ds = make_structured(ds, var_name=list(ds.data_vars)[0])
+        ds[list(ds.data_vars)[0]].attrs['GRIB_typeOfLevel'] = 'surface'     
         ds.to_netcdf(f"{out_path}/r2m_{hfp}.nc")
 
-    if len(tipo)==0:        print(f"Tipo '{tipo}' no reconocido")
-
+    if len(tipo)==0: print(f"Tipo '{tipo}' no reconocido")

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
-import sys
-import xarray as xr
+#import time
+#import sys
+#import xarray as xr
 from SMN_tools import extrac_ETA
 from SMN_tools import extrac_WRF
 from SMN_tools import process_netcdf_files
@@ -20,7 +21,7 @@ os.environ["GRIB_INDEX_DIR"] = cache_dir
 #r0 = '/scratch/Datatemporal/SMN/data/regional' # Ruta de datos iniciales por modelo
 r0 = '/home/jonathan/personal/e4/SMN_tools/data'
 #
-model = "PERU_ETA22" # "PERU_WRF22" #"PERU_ETA22" #"PERU_WRF22"
+model = "PERU_WRF22" # "PERU_WRF22" #"PERU_ETA22" #"PERU_WRF22"
 hor = "06"
 dia = "01"
 mes = "01"
@@ -39,18 +40,21 @@ if "ETA" in model:
 elif "WRF" in model: 
     grib = f'{r0}/{model}/{yea}{mes}/{yea}{mes}{dia}{hor}'
     files_pro=gb('%s/WRFPRS_*'%grib)
-else: print('model GFS??')
+else: 
+    print('model GFS??')
 #
 files_prono = [e for e in sorted(files_pro) if not any(x in e for x in ['idx', 'ctl'])] 
 print(files_prono)
-tipos = ['tp','level_vars','wind10m','t2m','r2m','ssrd','mslp'][:]
+tipos = ['level_vars','tp','t2m','r2m','ssrd','prmsl','wind10m'][:]
 print(tipos)
 
 ##################### EXTRAE VARIABLES ############################
 for file_p in files_prono[:]:
     print(file_p)
-    if "ETA" in model: extrac_ETA(outdir, file_p, tipos)
-    if "WRF" in model: extrac_WRF(outdir, file_p, tipos)
+    if "ETA" in model: 
+        extrac_ETA(outdir, file_p, tipos)
+    if "WRF" in model: 
+        extrac_WRF(outdir, file_p, tipos)
 #'''
 
 #################### MODIFICA COORDENADAS Y MERGE TIME ###########
@@ -58,19 +62,24 @@ for file_p in files_prono[:]:
 for var_in in ['prs','sfc'][:]: # condiciona para variables de superficie o de altura
     if 'prs' in var_in: 
         nueva_lista= ['u','v']  #modifica si quiere agregar + variables en niveles
-        new_dims0=["time", "lev","lat", "lon"]
+        new_dims0=["time", "isobaricInhPa","latitude", "longitude"]
     else:
         lista_filtrada = [elemento for elemento in tipos if elemento != 'level_vars']
         nueva_lista = []
         for elemento in lista_filtrada:
-            if elemento == 'wind10m': nueva_lista.extend(['10u', '10v'])            
-            else: nueva_lista.append(elemento)
-        new_dims0=["time", "lat", "lon"]
-    print('\n',nueva_lista,'**'*40)
+            if elemento == 'wind10m': 
+                nueva_lista.extend(['u10', 'v10'])            
+            else: 
+                nueva_lista.append(elemento)
+        new_dims0=["time", "latitude", "longitude"]
+    print('\n',nueva_lista,'**'*20)
     for var in nueva_lista[:]: #modifica aqui para todas las variables        
         files_vars=gb('%s/%s_*'%(outdir,var))
-        if len(files_vars)==0: print('Sin Archivos para variable: %s'%var); continue
-        print('#'*20,var,'#'*20)
+        print(files_vars)
+        if len(files_vars)==0: 
+            print('Sin Archivos para variable: %s'%var)
+            continue
+        print('#'*10,var,'#'*10)
         process_netcdf_files(files_vars, prefix_out=var_in, new_dims=new_dims0)
 #'''
 

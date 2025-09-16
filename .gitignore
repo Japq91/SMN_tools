@@ -12,3 +12,6 @@ __pycache__/
 *.pyo
 # Ignorar carpeta de pruebas
 script/prueba/
+data/out/
+src/SMN_tools/.ipynb_checkpoints/
+*.pyc

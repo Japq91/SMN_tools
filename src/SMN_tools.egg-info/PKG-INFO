@@ -1,14 +1,269 @@
 Metadata-Version: 2.4
 Name: SMN_tools
 Version: 0.1.0
-Summary: Herramientas para extraer variables de modelos SENAMHI
+Summary: Herramientas para procesamiento de modelos ETA/WRF y NetCDF
 Author: Jonathan apq
 Author-email: Japq <japaredesq@gmail.com>
+License: MIT
 Requires-Python: >=3.9
-Requires-Dist: xarray
-Requires-Dist: cfgrib
-Requires-Dist: numpy
-Requires-Dist: netCDF4
-Requires-Dist: h5netcdf
+Description-Content-Type: text/markdown
+Requires-Dist: xarray>=2023.12.0
+Requires-Dist: cfgrib>=0.9.14.0
+Requires-Dist: numpy>=1.26.4
+Requires-Dist: netCDF4>=1.6.5
+Requires-Dist: h5netcdf>=1.2.0
 Dynamic: author
 Dynamic: requires-python
+
+# SMN_tools
+
+**SMN_tools** es un paquete en Python diseñado para la **extracción, procesamiento, estandarización y fusión de salidas de modelos meteorológicos** (ETA y WRF), utilizadas en SENAMHI.  
+
+El paquete transforma archivos **GRIB** en **NetCDF CF-1.8**, reorganizando variables y dimensiones para producir archivos listos para análisis y post-procesamiento.
+
+---
+
+##  Dependencias y versiones
+
+Este paquete requiere **Python >= 3.9**.  
+Las librerías y versiones exactas están definidas en [`pyproject.toml`](pyproject.toml):
+
+- `xarray==2025.9.0`  
+- `cfgrib==0.9.15.0`  
+- `numpy==2.3.3`  
+- `netCDF4==1.7.2`  
+- `h5netcdf==1.6.4`  
+
+Dependencias adicionales incluidas en `requirements.txt`:
+- `pandas==2.3.2`  
+- `eccodes==2.43.0`  
+- `h5py==3.14.0`  
+
+---
+
+##  Estructura del proyecto
+
+```
+
+SMN_tools/
+├── pyproject.toml        # Configuración PEP 621 (paquete y dependencias)
+├── requirements.txt      # Dependencias congeladas
+├── setup.py              # Instalación alternativa
+├── script/
+│   └── test_extrac.py    # Ejemplo completo de flujo de trabajo
+├── src/
+│   └── SMN_tools/        # Código fuente
+│       ├── ETA_extrae.py     # Extracción ETA
+│       ├── WRF_extrae.py     # Extracción WRF
+│       ├── procesa_netcdf.py # Procesamiento de NetCDF
+│       ├── merge_netcdf.py   # Fusión de variables
+│       ├── rename_clean.py   # Estandarización de variables/dimensiones
+│       ├── delete_files.py   # Limpieza de directorios
+│       ├── __init__.py       # API pública del paquete
+│       └── __main__.py       # Punto de entrada # desactualizado
+└── SMN_tools.egg-info/   # Metadatos de instalación
+
+```
+
+---
+
+##  Instalación
+
+Clonar el repositorio e instalar en modo editable:
+
+```bash
+git clone https://github.com/Japq91/SMN_tools.git
+cd SMN_tools
+pip install -e .
+```
+---
+
+##  Detalle de scripts principales
+
+### 1. Extracción de variables: `ETA_extrae.py` y `WRF_extrae.py`
+
+Los scripts **`ETA_extrae.py`** y **`WRF_extrae.py`** contienen las funciones principales para la **extracción de variables meteorológicas desde archivos GRIB** generados por los modelos **ETA** y **WRF**.  
+Ambos convierten las variables en **archivos NetCDF individuales por variable y paso temporal**, facilitando el procesamiento y análisis posterior.
+
+- **Función ETA**: `extrac_ETA(out_path, gribfile, tipo)`  
+- **Función WRF**: `extrac_WRF(out_path, gribfile, tipo)`  
+
+#### Variables soportadas
+
+- **Comunes a ambos modelos**
+  - Precipitación acumulada (`tp`)
+  - Viento en niveles isobáricos (`level_vars`: u, v en 925, 850, 500, 200 hPa)
+  - Presión al nivel del mar (`mslp`)
+  - Viento a 10 m (`wind10m`: u10, v10 / `10u`, `10v`)
+  - Temperatura a 2 m (`t2m`)
+  - Humedad relativa a 2 m (`r2m`)
+
+- **Específicas de ETA**
+  - Radiación de onda corta descendente (`ssrd`)
+
+- **Específicas de WRF**
+  - Temperatura de rocío a 2 m (`d2m`)
+  - Geopotencial en niveles (`gh`)
+
+#### Funciones adicionales
+
+- `WRF_extrae.py` incluye la función auxiliar **`make_structured()`**, que reorganiza los datasets en grillas regulares con coordenadas únicas de latitud y longitud, y opcionalmente un eje vertical (`z`), asegurando compatibilidad para análisis posteriores.
+
+
+### 2. **procesa\_netcdf.py**
+
+* Función: `process_netcdf_files(list_files, prefix_out, new_dims)`
+* **Objetivo**:
+
+  * Uniformiza NetCDFs generados en la fase de extracción.
+  * Renombra variables y dimensiones.
+  * Concatena archivos a lo largo del tiempo.
+  * Añade metadatos estándar CF.
+* Dimensiones soportadas:
+
+  * Superficie: `["time","lat","lon"]`
+  * Niveles: `["time","lev","lat","lon"]`.
+---
+
+### 3. **rename\_clean.py**
+
+* Función: `rename_and_clean(input_file, output_file, var_name_out, dims_out)`
+* Renombra dimensiones y variables para uniformizar productos NetCDF.
+* Elimina coordenadas innecesarias (`valid_time`, `forecast_reference_time`).
+* Configura compresión (`zlib`).
+* Retorna un dataset limpio listo para concatenación o fusión.
+---
+
+### 4. **merge\_netcdf.py**
+
+* Función: `merge_files(list_files, output_file, institution="SENAMHI", source=None)`
+* Une múltiples archivos NetCDF procesados en un solo producto.
+* Añade metadatos globales compatibles con CF-1.8 (`institution`, `source`, `history`, `references`).
+* Comprime variables con `zlib`.
+---
+
+### 5. **delete\_files.py**
+
+* Función: `clean_outdir(outdir)`
+* Elimina todos los archivos `.nc` de un directorio de salida.
+* Útil para limpiar corridas anteriores antes de procesar nuevas.
+---
+
+### 6. **\_\_init\_\_.py**
+
+Expone las funciones principales del paquete:
+
+```python
+from .ETA_extrae import extrac_ETA
+from .WRF_extrae import extrac_WRF
+from .procesa_netcdf import process_netcdf_files
+from .rename_clean import rename_and_clean
+from .merge_netcdf import merge_files
+from .delete_files import clean_outdir
+```
+
+---
+
+##  Flujo de trabajo
+
+El flujo de trabajo completo está ejemplificado en [`script/test_extrac.py`](script/test_extrac.py).  
+Consta de **cuatro etapas principales**, que van desde la preparación de la corrida hasta la generación de archivos NetCDF finales de superficie (`sfc`) y niveles (`prs`).
+
+1. **Definir modelo, fecha y carpeta de salida**
+2. **Extraer variables ETA/WRF en NetCDF individuales**
+3. **Procesar y concatenar archivos por variable**
+4. **Unir variables de superficie o niveles en un archivo final**
+
+Ejemplo resumido:
+
+---
+
+#### 1. Definir modelo, fecha y carpeta de salida
+Se configura el modelo a usar (`PERU_ETA22` o `PERU_WRF22`), así como fecha y hora de la corrida.  
+Además, se prepara la carpeta de salida y se limpian archivos `.nc` de corridas anteriores:
+
+```python
+model = "PERU_ETA22"   # o "PERU_WRF22"
+hor, dia, mes, yea = "06", "01", "01", "2025"
+
+outdir = f"/ruta/out/{model}"
+os.system(f'mkdir -p {outdir}')
+clean_outdir(outdir)   # elimina archivos previos
+```
+
+---
+
+#### 2. Extraer variables ETA/WRF en NetCDF individuales
+
+Dependiendo del modelo, se seleccionan archivos GRIB y se extraen las variables solicitadas.
+Ejemplo para ETA:
+
+```python
+tipos = ['tp','level_vars','wind10m','t2m','r2m','ssrd','mslp']
+
+for file_p in files_prono:
+    if "ETA" in model: extrac_ETA(outdir, file_p, tipos)
+    if "WRF" in model: extrac_WRF(outdir, file_p, tipos)
+```
+
+Cada variable se guarda como un archivo NetCDF independiente en la carpeta de salida, con su respectivo timestamp.
+
+---
+
+#### 3. Procesar y concatenar archivos por variable
+
+Una vez extraídas, las variables deben estandarizarse en dimensiones y concatenarse en el tiempo.
+
+* Para **superficie** (`sfc`): se usan dimensiones `["time","lat","lon"]`.
+* Para **niveles de presión** (`prs`): se usan dimensiones `["time","lev","lat","lon"]`.
+
+```python
+for var_in in ['prs','sfc']:
+    if var_in == 'prs':
+        nueva_lista = ['u','v']   # variables en niveles
+        new_dims0 = ["time","lev","lat","lon"]
+    else:
+        nueva_lista = ['tp','10u','10v','t2m','r2m','mslp','ssrd']
+        new_dims0 = ["time","lat","lon"]
+
+    for var in nueva_lista:
+        files_vars = gb(f'{outdir}/{var}_*')
+        process_netcdf_files(files_vars, prefix_out=var_in, new_dims=new_dims0)
+```
+
+Esto produce archivos intermedios con prefijo `sfc_tmp_` o `prs_tmp_`.
+
+---
+
+#### 4. Unir variables de superficie o niveles en un archivo final
+
+Finalmente, todas las variables de superficie (`sfc`) o niveles (`prs`) se combinan en un único NetCDF comprimido con metadatos CF-1.8:
+
+```python
+for var_in in ['prs','sfc']:
+    files_variables = gb(f"{outdir}/{var_in}_*")
+    if len(files_variables) == 0: continue
+
+    final_name = f"{model}_{yea}{mes}{dia}{hor}_{var_in}.nc"
+    out_file = os.path.join(run_dir, final_name)
+
+    merge_files(files_variables, out_file)
+```
+
+---
+
+#### Salida final
+
+* `PERU_ETA22_2025010106_sfc.nc`
+* `PERU_ETA22_2025010106_prs.nc`
+
+o, en el caso de WRF:
+
+* `PERU_WRF22_2025010106_sfc.nc`
+* `PERU_WRF22_2025010106_prs.nc`
+---
+
+## Licencia
+
+MIT License.
+

@@ -3,6 +3,7 @@
 
 import pandas as pd
 import re
+import netCDF4 as nc
 import numpy as np
 import xarray as xr
 import os
@@ -36,6 +37,7 @@ def extrac_ETA(out_path, gribfile, tipo):
             backend_kwargs={'filter_by_keys': {'typeOfLevel': 'surface', 'shortName': 'tp'}, 'indexpath': ''},
             decode_timedelta=False)
         ds = ds.expand_dims(time=[valid_time])
+        ds['tp'].attrs['GRIB_typeOfLevel'] = 'surface'
         ds.to_netcdf(f"{out_path}/tp_{hfp}.nc")
 
     if 'level_vars' in tipo:   # Viento en niveles isobáricos
@@ -46,24 +48,26 @@ def extrac_ETA(out_path, gribfile, tipo):
                 backend_kwargs={'filter_by_keys': {'typeOfLevel': 'isobaricInhPa', 'shortName': var}, 'indexpath': ''},
                 decode_timedelta=False            )
             ds = ds.expand_dims(time=[valid_time])
-            ds.sel(isobaricInhPa=niveles_deseados, method='nearest')\
-              .to_netcdf(f"{out_path}/{var}_{hfp}.nc")
+            ds.sel(isobaricInhPa=niveles_deseados, method='nearest').to_netcdf(f"{out_path}/{var}_{hfp}.nc")
 
-    if 'mslp' in tipo:   # Presión al nivel del mar
+    if 'prmsl' in tipo:   # Presión al nivel del mar
         ds = xr.open_dataset(
             gribfile, engine="cfgrib",
             backend_kwargs={'filter_by_keys': {'typeOfLevel': 'meanSea', 'shortName': 'mslet'}, 'indexpath': ''},
             decode_timedelta=False        )
         ds = ds.expand_dims(time=[valid_time])
-        ds.to_netcdf(f"{out_path}/mslp_{hfp}.nc")
+        ds['mslet'].attrs['GRIB_typeOfLevel'] = 'surface'
+        ds.to_netcdf(f"{out_path}/prmsl_{hfp}.nc")
 
-    elif 'wind10m' in tipo:   # Viento 10m
+    if 'wind10m' in tipo:   # Viento 10m
         for var in ['u', 'v']:
             ds = xr.open_dataset( gribfile, engine="cfgrib",
                     backend_kwargs={'filter_by_keys': {'typeOfLevel': 'heightAboveGround', 'level': 10, 'stepType': 'instant' },
-                        'indexpath': ''}, decode_timedelta=False)[['%s10'%var]]
-            ds = ds.expand_dims(time=[valid_time])
-            ds.to_netcdf(f"{out_path}/10{var}_{hfp}.nc")
+                        'indexpath': ''}, decode_timedelta=False)
+            ds = ds[['%s10'%var]].expand_dims(time=[valid_time])
+            ds['%s10'%var].attrs['GRIB_typeOfLevel'] = 'surface'
+            #print(ds)
+            ds.to_netcdf(f"{out_path}/{var}10_{hfp}.nc")
 
     if 't2m' in tipo:   # Temperatura 2m
         ds = xr.open_dataset(
@@ -71,7 +75,9 @@ def extrac_ETA(out_path, gribfile, tipo):
             backend_kwargs={'filter_by_keys': {'typeOfLevel': 'heightAboveGround', 'level': 2, 'shortName': '2t'}, 'indexpath': ''},
             decode_timedelta=False        )
         ds = ds.expand_dims(time=[valid_time])
+        ds['t2m'].attrs['GRIB_typeOfLevel'] = 'surface'
         ds.to_netcdf(f"{out_path}/t2m_{hfp}.nc")
+
 
     if 'r2m' in tipo:   # Humedad relativa 2m
         ds = xr.open_dataset(
@@ -79,13 +85,16 @@ def extrac_ETA(out_path, gribfile, tipo):
             backend_kwargs={'filter_by_keys': {'typeOfLevel': 'heightAboveGround', 'level': 2, 'shortName': '2r'}, 'indexpath': ''},
             decode_timedelta=False        )
         ds = ds.expand_dims(time=[valid_time])
+        ds['r2'].attrs['GRIB_typeOfLevel'] = 'surface'
         ds.to_netcdf(f"{out_path}/r2m_{hfp}.nc")
-    if 'ssrd' in tipo: # Radiación onda corta (downward shortwave)media
+        
+    if 'ssrd' in tipo: # Radiación onda corta (downward shortwave) media
         ds = xr.open_dataset(
             gribfile, engine="cfgrib",
             backend_kwargs={'filter_by_keys': {'typeOfLevel': 'surface', 'stepType': 'avg','shortName':'avg_sdswrf'}, 'indexpath': ''},
             decode_times=False)
-        ds = ds.expand_dims(time=[valid_time])        
+        ds = ds.expand_dims(time=[valid_time])
+        ds['avg_sdswrf'].attrs['GRIB_typeOfLevel'] = 'surface'
         ds.to_netcdf(f"{out_path}/ssrd_{hfp}.nc")
 
     if len(tipo)==0:  print(f"Tipo '{tipo}' no reconocido")
