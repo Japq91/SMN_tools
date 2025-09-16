@@ -6,6 +6,9 @@ WRF5: /scratch/Datatemporal/SMN/data/regional/NPE5k_WRF/grib2/
 ETA10: /scratch/Datatemporal/SMN/data/regional/ETA10km
 WRFCN1k: /scratch/Datatemporal/SMN/data/regional/NCN1k_WRF/grib2
 #
-python3 -m venv .venv
-source .venv/bin/activate 
-pip install -e .
+#python3 -m venv .venv
+#source .venv/bin/activate 
+#pip install -e .
+#
+#conda env create -f environment.yml
+#source activate smn_tools
