@@ -15,3 +15,6 @@ script/prueba/
 data/out/
 src/SMN_tools/.ipynb_checkpoints/
 *.pyc
+.ipynb_checkpoints/
+cods/.ipynb_checkpoints/
+__pycache__/
