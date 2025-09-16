@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from setuptools import setup, find_packages
 
 setup(
@@ -5,16 +8,21 @@ setup(
     version="0.1.0",
     description="Herramientas para extraer variables de modelos SENAMHI",
     author="Jonathan apq",
+    packages=find_packages("src"),
     package_dir={"": "src"},
-    packages=find_packages(where="src"),
     install_requires=[
         "xarray",
-        "cfgrib",
         "numpy",
         "netCDF4",
-        "h5netcdf"
-        ],
-
-    python_requires=">=3.9",
+        "cfgrib",
+        "h5netcdf",
+        "ipykernel",   # <-- aquí
+    ],
 )
+entry_points={
+    "console_scripts": [
+        "install-smn-kernel=SMN_tools.scripts.install_kernel:main",
+    ],
+},
+
 

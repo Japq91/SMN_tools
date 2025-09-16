@@ -9,20 +9,22 @@ description = "Herramientas para procesamiento de modelos ETA/WRF y NetCDF"
 authors = [
     { name = "Japq", email = "japaredesq@gmail.com" }
 ]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.7"
 
-#
 dependencies = [
     "xarray>=2023.12.0",
     "cfgrib>=0.9.14.0",
     "numpy>=1.26.4",
     "netCDF4>=1.6.5",
     "h5netcdf>=1.2.0",
+    "ipykernel>=6.0.0",   # <-- agregado
 ]
-#
-readme = "README.md"
-license = { text = "MIT" }
-requires-python = ">=3.7"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[project.scripts]
+install-smn-kernel = "SMN_tools.scripts.install_kernel:main"
 
