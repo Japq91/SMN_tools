@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.colors as mcolors
 ####################################################################################
-def get_cmap_norm(variable_name, data_range=None, model_type=None):
+def get_cmap_norm(variable_name, data_range=None, dataset=None):
     """
     Devuelve cmap y norm según la variable especificada, con soporte para diferentes modelos.
     
@@ -14,8 +14,7 @@ def get_cmap_norm(variable_name, data_range=None, model_type=None):
         Nombre de la variable ('prmsl', 'mslet', 't2m', 'u10m', etc.)
     data_range : tuple, opcional
         Rango (min, max) de los datos para escalas genéricas
-    model_type : str, opcional
-        Tipo de modelo ('gfs', 'wrf', 'eta') para ajustes específicos
+    dataset : netcdf file abierto co xarray, opcional caso no definida la variable aqui        
     """
     # Configuración para presión al nivel del mar (común a todos los modelos)
     if variable_name in ['prmsl', 'mslet']:
@@ -60,9 +59,10 @@ def get_cmap_norm(variable_name, data_range=None, model_type=None):
             vmin, vmax = data_range
             clevs = np.linspace(vmin, vmax, 20)
         else:
-            clevs = np.linspace(np.min(data), np.max(data), 20)
+            clevs = np.linspace(np.min(dataset).values, np.max(dataset).values, 11)
+            clevs = [int(e) for e in clevs]
         
-        cmap = plt.cm.viridis
+        cmap = plt.cm.terrain_r
         norm = mcolors.BoundaryNorm(boundaries=clevs, ncolors=cmap.N)
     
     return cmap, norm, clevs
