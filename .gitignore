@@ -1,17 +1,18 @@
 #data/
 cfgrib_cache/
+cods/figuras/
 lista
 # Ignorar carpeta "antes" dentro del paquete
 src/SMN_tools/antes/
 # Ignorar entornos virtuales
-script/.venv/
+cods/.venv/
 .venv/
 # Ignorar caches y compilados
 __pycache__/
 *.pyc
 *.pyo
 # Ignorar carpeta de pruebas
-script/prueba/
+cods/prueba/
 data/out/
 src/SMN_tools/.ipynb_checkpoints/
 *.pyc
