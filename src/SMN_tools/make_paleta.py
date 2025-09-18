@@ -101,7 +101,7 @@ def get_contour(variable_name):
             'pink': [-10, -9, -8, -7, -6]
         }
     
-    elif variable_name in ['u10m', 'v10m', 'wind10m']:
+    elif variable_name in ['u10', 'v10']:
         # Contornos para velocidad del viento a 10m (m/s)
         return {
             'lightblue': [2, 4, 6],
@@ -113,7 +113,7 @@ def get_contour(variable_name):
             'red': [38, 40, 42]
         }
     
-    elif variable_name in ['d2m', 'rh']:
+    elif variable_name in ['d2m', 'r2m']:
         # Contornos para punto de rocío (d2m en °C) o humedad relativa (rh en %)
         if variable_name == 'd2m':
             return {
@@ -125,7 +125,7 @@ def get_contour(variable_name):
                 'yellow': [20, 21, 22, 23, 24],
                 'orange': [25, 26, 27, 28, 29]
             }
-        else:  # rh - humedad relativa
+        else:  # r2m - humedad relativa
             return {
                 'red': [10, 20, 30],
                 'orange': [40, 50],
