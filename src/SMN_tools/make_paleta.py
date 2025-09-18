@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import matplotlib.pyplot as plt
+import numpy as np
 import matplotlib.colors as mcolors
 ####################################################################################
 def get_cmap_norm(variable_name, data_range=None, model_type=None):
@@ -42,7 +43,7 @@ def get_cmap_norm(variable_name, data_range=None, model_type=None):
         norm = mcolors.BoundaryNorm(boundaries=clevs, ncolors=cmap.N)
         
     # Configuración para viento a 10m
-    elif variable_name in ['u10m', 'v10m', 'wind10m']:
+    elif variable_name in ['u10', 'v10']:
         clevs = np.arange(0, 30, 2)
         cmap = plt.cm.Blues
         norm = mcolors.BoundaryNorm(boundaries=clevs, ncolors=cmap.N)

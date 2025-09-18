@@ -5,10 +5,10 @@ WRF22: /scratch/Datatemporal/SMN/data/regional/PERU_WRF22
 WRF5: /scratch/Datatemporal/SMN/data/regional/NPE5k_WRF/grib2/
 ETA10: /scratch/Datatemporal/SMN/data/regional/ETA10km
 WRFCN1k: /scratch/Datatemporal/SMN/data/regional/NCN1k_WRF/grib2
-#
+# version anterior de instalacion
 #python3 -m venv .venv
 #source .venv/bin/activate 
 #pip install -e .
-#
+# nuevo formato de instalacion en hpc o pc
 #conda env create -f environment.yml
 #source activate smn_tools
