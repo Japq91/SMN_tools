@@ -16,22 +16,24 @@ cache_dir = os.path.join(BASE_DIR, "../cfgrib_cache")
 os.makedirs(cache_dir, exist_ok=True)
 os.environ["GRIB_INDEX_DIR"] = cache_dir
 #
-r0 = '/scratch/Datatemporal/SMN/data/regional' # Ruta de datos iniciales por modelo
+#r0 = '/scratch/Datatemporal/SMN/data/regional' # Ruta de datos iniciales por modelo
 #
-model = str(sys.argv[1]) # "PERU_WRF22" #"PERU_ETA22" #"PERU_WRF22"
-fecha = str(sys.argv[2]) # formato YYYYMMDD
-hor = "%02d"%int(sys.argv[3]) #formato HH
+r0 = str(sys.argv[1]) ## Ruta de datos iniciales por modelo
+model = str(sys.argv[2]) # "PERU_WRF22" #"PERU_ETA22" #"PERU_WRF22"
+fecha = str(sys.argv[3]) # formato YYYYMMDD
+hor = "%02d"%int(sys.argv[4]) #formato HH
+r_out = str(sys.argv[5]) # "/scratch/SMN_tools/out"
+outdir='%s/%s'%(r_out,model)
+os.system(f"mkdir -p {outdir}")
+clean_outdir(outdir)
+
 dia = "%s"%fecha[6:]
 mes = "%s"%fecha[4:6]
 yea = "%s"%fecha[:4]
 print('comienza python')
 print(yea,mes,dia, hor, model)
 
-#'''
-outdir = "/scratch/SMN_tools/out/%s"%model
-os.system('mkdir -p %s'%outdir)
-clean_outdir(outdir)
-
+# '''
 ##########################################################################
 
 if "ETA" in model: 

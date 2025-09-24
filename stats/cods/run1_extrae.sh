@@ -29,7 +29,7 @@ python 02_extrae_dias.py $r_in $model $f_ini $f_fin $var_name $time_prono
 observado=$r0/observado/clima_pisco_t2m.nc # <-----
 pronostico=$r0/data/$ofile
 observado_cortado=$r0/recortado/$ofile
-python 03_extrae_clima.py $observado $pronostico $observado_cortado
+python 03_extrae_observado.py $observado $pronostico $observado_cortado
 
 # PARTE 3
 output_file=$r0/metrics_out/$ofile
