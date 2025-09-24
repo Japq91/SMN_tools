@@ -30,5 +30,10 @@ entry_points={
         "install-smn-kernel=SMN_tools.scripts.install_kernel:main",
     ],
 },
-
-
+############################################################
+###### quitar el "#" para instalar con los dos comandos ####
+########## Instalar el paquete #############################
+# pip install -e . # comando 1 
+########## Probar el comando del kernel ####################
+# install-smn-kernel # comando 2
+############################################################

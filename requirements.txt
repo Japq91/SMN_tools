@@ -1,29 +1,38 @@
-attrs>=23.1.0
-certifi>=2023.7.22
-cffi>=1.15.1
-cfgrib>=0.9.10.4
-cftime>=1.6.2
-click>=8.1.7
-eccodes>=2.27.0
+# Dependencias principales del proyecto smn_tools
+# Generado a partir del environment.yml
+
+# Análisis de datos científicos
+xarray>=2023.7.0
+numpy>=1.24.3
+pandas>=2.0.3
+
+# Manejo de archivos NetCDF y HDF5
+netCDF4>=1.6.2
 h5netcdf>=1.2.0
 h5py>=3.8.0
-netCDF4>=1.6.2
-numpy>=1.24.3
-packaging>=23.1
-pandas>=2.0.3
-pycparser>=2.21
-python-dateutil>=2.8.2
-pytz>=2023.3
-six>=1.16.0
-tzdata>=2023.3
-xarray>=2023.7.0
-contourpy>=1.0.1
-cycler>=0.10
-fonttools>=4.22.0
-kiwisolver>=1.3.1
-pyparsing>=2.3.1
+
+# Manejo de archivos GRIB 
+cfgrib>=0.9.10.4
+eccodes>=2.27.0   # Nota: eccodes puede requerir instalación del sistema
+
+# Jupyter/IPython
+ipykernel>=6.0.0
+
+# Visualización
 matplotlib>=3.7.0
 pillow>=9.0.0
 
--e git+https://github.com/Japq91/SMN_tools@c3aa290b4794d1ab403260087101385886689390#egg=SMN_tools
+# Instalación del paquete SMN_tools desde GitHub (commit específico)
+-e git+https://github.com/Japq91/SMN_tools
 
+### NOTAS DE INSTALACIÓN: ###
+### Clonar el repositorio
+#git clone https://github.com/Japq91/SMN_tools
+#cd SMN_tools
+
+### Instalar dependencias
+#pip install -r requirements.txt
+
+### El paquete se instala automáticamente por la línea -e en requirements.txt
+### Instalar kernel de Jupyter
+#install-smn-kernel

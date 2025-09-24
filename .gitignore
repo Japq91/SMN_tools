@@ -1,7 +1,7 @@
 #data/
 cfgrib_cache/
 cods/figuras/
-lista
+#lista
 # Ignorar carpeta "antes" dentro del paquete
 src/SMN_tools/antes/
 # Ignorar entornos virtuales
@@ -15,20 +15,12 @@ __pycache__/
 cods/prueba/
 data/out/
 src/SMN_tools/.ipynb_checkpoints/
-*.pyc
 .ipynb_checkpoints/
 cods/.ipynb_checkpoints/
-__pycache__/
-__pycache__/
-__pycache__/
-__pycache__/
-__pycache__/
-*.pyc
-*.pyo
 # Python cache files
-__pycache__/
 *.py[cod]
 *.class
-__pycache__/
-*.pyc
-*.pyo
+# Ignorar carpeta de metricas
+stats/data/
+stats/metrics_out/
+stats/recortado/
