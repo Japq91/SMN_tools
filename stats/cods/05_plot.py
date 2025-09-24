@@ -29,8 +29,8 @@ def main():
         plt.title(f"{file_name}\n{varia}")
 
         # Guardar figura
-        out_path = os.path.join(output_dir, f"{varia}_{file_name}.png")
-        plt.savefig(out_path, dpi=100, bbox_inches="tight")
+        out_path = os.path.join(output_dir, f"{varia}_{file_name}")
+        plt.savefig('%s.png'%out_path[:-3], dpi=100, bbox_inches="tight")
         plt.close()
 
     print(f"Figuras guardadas en: {output_dir}")

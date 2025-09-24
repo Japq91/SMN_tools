@@ -17,8 +17,8 @@ mkdir -p $r0/observado $r0/data $r0/recortado $r0/metrics_out $r0/figuras
 # PARTE 1
 model=PERU_ETA22
 var_name=t2m  #t2m # otras variables extraidas con el paquete SMN_tools
-time_prono=2 # numero de dia de prono D1, D2, D3, D4, etc
-f_ini=20250214 # datas de inicio formato:  YYYYMMDD
+time_prono=3 # numero de dia de prono D1, D2, D3, D4, etc
+f_ini=20250224 # datas de inicio formato:  YYYYMMDD
 f_fin=20250314 # datas de fin    formato:  YYYMMDD
 #
 ofile=${model}_D${time_prono}_${f_ini}_${f_fin}_${var_name}.nc
