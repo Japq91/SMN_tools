@@ -48,9 +48,15 @@ fecha_ini = sys.argv[3]
 fecha_fin = sys.argv[4]
 var_name = sys.argv[5]
 day_index = int(sys.argv[6])
+#
+
+if var_name in ['u','v']: 
+    tipo_archivo='prs'
+else: 
+    tipo_archivo='sfc'
 
 # ================= BUSCAR ARCHIVOS ================= #
-archivos = sorted(gb(f"{input_dir}/*.nc"))
+archivos = sorted(gb(f"{input_dir}/*_{tipo_archivo}.nc"))
 if not archivos:
     raise FileNotFoundError(f"No se encontraron archivos en {input_dir}")
 

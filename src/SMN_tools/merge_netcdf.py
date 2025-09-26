@@ -4,6 +4,13 @@
 import os
 import xarray as xr
 
+def cambia_lon(ds_prono):
+    if (ds_prono.longitude > 180).any():
+        ds_prono = ds_prono.assign_coords(
+                longitude=((ds_prono.longitude + 180) % 360) - 180
+                ).sortby("longitude")
+    return ds_prono
+
 def merge_files(list_files, output_file, institution="SENAMHI", source=None):
     """
     Une en un solo NetCDF todas las variables de superficie procesadas previamente.
@@ -37,6 +44,7 @@ def merge_files(list_files, output_file, institution="SENAMHI", source=None):
     #
     # Guardar comprimido
     encoding = {var: {"zlib": True, "complevel": 5} for var in combined.data_vars}
+    combined = cambia_lon(combined)
     combined.to_netcdf(output_file, encoding=encoding, format="NETCDF4")
     combined.close()
     print(f"Archivo de superficie generado: {output_file}")

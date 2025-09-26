@@ -19,9 +19,9 @@ def main():
     file_name = os.path.basename(nc_file)
     # Abrir dataset
     ds = xr.open_dataset(nc_file)
-
+    variables_lista=[e for e in list(ds.variables) if not e in ['latitude','longitude']]
     # Iterar sobre variables (excluyendo coordenadas típicas)
-    for varia in list(ds.variables)[2:]:
+    for varia in variables_lista:
         print(f"Generando figura para {varia}...")
 
         plt.figure()

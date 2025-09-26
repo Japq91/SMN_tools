@@ -26,7 +26,7 @@ for mes in "${meses[@]}"; do
         echo model: "$model" 
 	echo fecha: "$fecha" 
 	echo horas: "$hora"Z
-	python corre_extrac.py $model $fecha $hora
+	python corre_extrac.py $r0 $model $fecha $hora $outdir
 
     done
 done

@@ -67,9 +67,12 @@ ds_obs = xr.open_dataset(obs_file)
 obs = ds_obs[var_name]
 fcst = ds_fcst[var_name]
 
-if 't2m' in var_name: fcst = ds_fcst[var_name]-273.15
-elif 'prmsl' in var_name: fcst = ds_fcst[var_name]/100
-else: fcst = ds_fcst[var_name]
+if 't2m' in var_name: 
+    fcst = ds_fcst[var_name]-273.15
+elif 'prmsl' in var_name: 
+    fcst = ds_fcst[var_name]/100
+else: 
+    fcst = ds_fcst[var_name]
 
 # Alinear en el tiempo
 #fcst, obs = xr.align(fcst, obs, join="inner")
