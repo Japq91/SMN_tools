@@ -13,6 +13,15 @@ De esta manera, **SMN\_tools** permite integrar en un solo paquete el ciclo comp
 
 ---
 
+```mermaid
+flowchart TD
+    A[Definir modelo, fecha y carpeta de salida] --> B[Extraer variables ETA/WRF en NetCDF individuales]
+    B --> C[Procesar y concatenar archivos por variable]
+    C --> D[Unir variables de superficie o niveles en un archivo final]
+    D --> E[Ejecución automática con corre_extrac.sh y corre_extrac.py]
+```
+
+
 ## Dependencias y versiones
 
 Este paquete requiere **Python >= 3.7**.  
