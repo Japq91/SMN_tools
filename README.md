@@ -69,42 +69,38 @@ Realizando esta modificación se podrá usar las librerías del entorno virtual 
 ## Diagrama de la estructura del proyecto
 
 ```mermaid
-flowchart TD
-    A[SMN_tools/] --> B[pyproject.toml]
-    A --> C[environment.yml]
-    A --> D[requirements.txt]
-    A --> E[Makefile]
-    A --> F[cods/]
-    F --> F1[corre_extrac.py]
-    F --> F2[corre_extrac.sh]
-    F --> F3[test_extrac.py]
-    F --> F4[test_plot.py]
-    A --> G[stats/]
-    G --> G1[cods/]
-    G1 --> G11[01_crea_pisco.py]
-    G1 --> G12[02_extrae_dias.py]
-    G1 --> G13[03_extrae_observado.py]
-    G1 --> G14[04_metrics.py]
-    G1 --> G15[05_plot.py]
-    G --> G2[data/]
-    G --> G3[observado/]
-    G --> G4[recortado/]
-    G --> G5[metrics_out/]
-    G --> G6[figuras/]
-    A --> H[data/]
-    A --> I[src/]
-    I --> I1[SMN_tools/]
-    I1 --> I11[ETA_extrae.py]
-    I1 --> I12[WRF_extrae.py]
-    I1 --> I13[procesa_netcdf.py]
-    I1 --> I14[merge_netcdf.py]
-    I1 --> I15[rename_clean.py]
-    I1 --> I16[delete_files.py]
-    I1 --> I17[scripts/]
-    I17 --> I171[install_kernel.py]
-    I1 --> I18[__init__.py]
-    I1 --> I19[__main__.py]
-    A --> J[SMN_tools.egg-info/]
+flowchart TB
+    A[SMN_tools/] --> B[Configuración]
+    B --> B1[pyproject.toml]
+    B --> B2[environment.yml]
+    B --> B3[requirements.txt]
+    B --> B4[Makefile]
+
+    A --> C[cods/]
+    C --> C1[corre_extrac.py / .sh]
+    C --> C2[test_extrac.py / test_plot.py]
+
+    A --> D[stats/]
+    D --> D1[cods/ (scripts métricas)]
+    D1 --> D11[01_crea_pisco.py]
+    D1 --> D12[02_extrae_dias.py]
+    D1 --> D13[03_extrae_observado.py]
+    D1 --> D14[04_metrics.py]
+    D1 --> D15[05_plot.py]
+    D --> D2[data/]
+    D --> D3[observado/]
+    D --> D4[recortado/]
+    D --> D5[metrics_out/]
+    D --> D6[figuras/]
+
+    A --> E[data/]
+
+    A --> F[src/SMN_tools/]
+    F --> F1[Extracción: ETA_extrae.py, WRF_extrae.py]
+    F --> F2[Procesamiento: procesa_netcdf.py, merge_netcdf.py, rename_clean.py, delete_files.py]
+    F --> F3[scripts/install_kernel.py]
+    F --> F4[__init__.py / __main__.py]
+
 ```
 
 ## Estructura del proyecto
@@ -112,9 +108,7 @@ flowchart TD
 ```
 
 SMN_tools/
-├── pyproject.toml        # Configuración PEP 621 (pip install)
 ├── environment.yml       # Entorno Conda (conda env create)
-├── requirements.txt      # Dependencias para pip
 ├── Makefile              # Instalación rápida con make install
 ├── cods/                 # Scripts y pruebas de extracción
 │   ├── corre_extrac.py   # Para multiples archivos o fechas
@@ -134,19 +128,18 @@ SMN_tools/
 │   ├── metrics_out/      # Resultados de métricas estadísticas
 │   └── figuras/          # Gráficos de validación
 ├── data/                 # Datos de entrada brutos
-├── src/                  # Código fuente principal
-│   └── SMN_tools/
-│       ├── ETA_extrae.py
-│       ├── WRF_extrae.py
-│       ├── procesa_netcdf.py
-│       ├── merge_netcdf.py
-│       ├── rename_clean.py
-│       ├── delete_files.py
-│       ├── scripts/
-│       │   └── install_kernel.py
-│       ├── __init__.py
-│       └── __main__.py
-└── SMN_tools.egg-info/   # Sin uso
+└── src/                  # Código fuente principal
+    └── SMN_tools/
+        ├── ETA_extrae.py
+        ├── WRF_extrae.py
+        ├── procesa_netcdf.py
+        ├── merge_netcdf.py
+        ├── rename_clean.py
+        ├── delete_files.py
+        ├── scripts/
+        │   └── install_kernel.py
+        ├── __init__.py
+        └── __main__.py
 
 ```
 ---
