@@ -70,39 +70,37 @@ Realizando esta modificación se podrá usar las librerías del entorno virtual 
 
 ```mermaid
 flowchart TB
-    A[SMN_tools/] --> B[Configuración]
+    A[SMN_tools/] --> B[Configuracion]
     B --> B1[pyproject.toml]
     B --> B2[environment.yml]
     B --> B3[requirements.txt]
     B --> B4[Makefile]
 
-    A --> C[cods/]
-    C --> C1[corre_extrac.py / .sh]
-    C --> C2[test_extrac.py / test_plot.py]
+    A --> C[cods]
+    C --> C1[corre_extrac.py y corre_extrac.sh]
+    C --> C2[test_extrac.py y test_plot.py]
 
-    A --> D[stats/]
-    D --> D1[cods/ (scripts métricas)]
+    A --> D[stats]
+    D --> D1[cods scripts metricas]
     D1 --> D11[01_crea_pisco.py]
     D1 --> D12[02_extrae_dias.py]
     D1 --> D13[03_extrae_observado.py]
     D1 --> D14[04_metrics.py]
     D1 --> D15[05_plot.py]
-    D --> D2[data/]
-    D --> D3[observado/]
-    D --> D4[recortado/]
-    D --> D5[metrics_out/]
-    D --> D6[figuras/]
+    D --> D2[data]
+    D --> D3[observado]
+    D --> D4[recortado]
+    D --> D5[metrics_out]
+    D --> D6[figuras]
 
-    A --> E[data/]
+    A --> E[data]
 
-    A --> F[src/SMN_tools/]
-    F --> F1[Extracción: ETA_extrae.py, WRF_extrae.py]
+    A --> F[src SMN_tools]
+    F --> F1[Extraccion: ETA_extrae.py, WRF_extrae.py]
     F --> F2[Procesamiento: procesa_netcdf.py, merge_netcdf.py, rename_clean.py, delete_files.py]
-    F --> F3[scripts/install_kernel.py]
-    F --> F4[__init__.py / __main__.py]
-
+    F --> F3[scripts install_kernel.py]
+    F --> F4[init y main]
 ```
-
 ## Estructura del proyecto
 
 ```
