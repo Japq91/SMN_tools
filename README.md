@@ -50,47 +50,9 @@ Después de clonar el repositorio, tienes **3 métodos** para instalar el paquet
 git clone https://github.com/Japq91/SMN_tools.git
 cd SMN_tools
 conda env create -f environment.yml
-conda activate smn_tools
+source activate smn_tools
 install-smn-kernel
 ```
-
-**Ventajas:** Maneja mejor dependencias complejas como `eccodes`, ideal para entornos científicos.
-
----
-
-### **Método 2: Pip con pyproject.toml**
-```bash
-git clone https://github.com/Japq91/SMN_tools.git
-cd SMN_tools
-pip install -e .
-install-smn-kernel
-```
-
-**Ventajas:** Instalación rápida y moderna, ideal para desarrollo.
-
----
-
-### **Método 3: Pip con requirements.txt**
-```bash
-git clone https://github.com/Japq91/SMN_tools.git
-cd SMN_tools
-pip install -r requirements.txt
-install-smn-kernel
-```
-
-**Ventajas:** Método tradicional, buena compatibilidad.
-
----
-
-### **Método Makefile (alternativa rápida)**
-```bash
-git clone https://github.com/Japq91/SMN_tools.git
-cd SMN_tools
-make install
-```
-
-Este comando equivale al **Método 2** (Pip con pyproject.toml).
-
 ---
 
 ## Uso en Jupyter Lab
@@ -104,6 +66,46 @@ Kernel → Change Kernel → Python (smn_tools) # una  vez dentro de jupyter
 Realizando esta modificación se podrá usar las librerías del entorno virtual donde instalaste **SMN_tools**.
 
 ---
+## Diagrama de la estructura del proyecto
+
+```mermaid
+flowchart TD
+    A[SMN_tools/] --> B[pyproject.toml]
+    A --> C[environment.yml]
+    A --> D[requirements.txt]
+    A --> E[Makefile]
+    A --> F[cods/]
+    F --> F1[corre_extrac.py]
+    F --> F2[corre_extrac.sh]
+    F --> F3[test_extrac.py]
+    F --> F4[test_plot.py]
+    A --> G[stats/]
+    G --> G1[cods/]
+    G1 --> G11[01_crea_pisco.py]
+    G1 --> G12[02_extrae_dias.py]
+    G1 --> G13[03_extrae_observado.py]
+    G1 --> G14[04_metrics.py]
+    G1 --> G15[05_plot.py]
+    G --> G2[data/]
+    G --> G3[observado/]
+    G --> G4[recortado/]
+    G --> G5[metrics_out/]
+    G --> G6[figuras/]
+    A --> H[data/]
+    A --> I[src/]
+    I --> I1[SMN_tools/]
+    I1 --> I11[ETA_extrae.py]
+    I1 --> I12[WRF_extrae.py]
+    I1 --> I13[procesa_netcdf.py]
+    I1 --> I14[merge_netcdf.py]
+    I1 --> I15[rename_clean.py]
+    I1 --> I16[delete_files.py]
+    I1 --> I17[scripts/]
+    I17 --> I171[install_kernel.py]
+    I1 --> I18[__init__.py]
+    I1 --> I19[__main__.py]
+    A --> J[SMN_tools.egg-info/]
+```
 
 ## Estructura del proyecto
 
