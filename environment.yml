@@ -1,0 +1,31 @@
+name: smn_tools
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - xarray>=2023.7.0
+  - numpy>=1.24.3
+  - pandas>=2.0.3
+  - netCDF4>=1.6.2
+  - h5netcdf>=1.2.0
+  - h5py>=3.8.0
+  - cfgrib>=0.9.10.4
+  - eccodes>=2.27.0
+  - scipy>=1.11.0  #
+  - ipykernel>=6.0.0
+  - matplotlib>=3.7.0    #  
+  - pillow>=9.0.0        #  
+  - pip
+  - pip:
+      - -e .
+
+### Clonar el repositorio
+#git clone https://github.com/Japq91/SMN_tools
+#cd SMN_tools
+
+### Crear entorno e instalar
+#conda env create -f environment.yml
+#source activate smn_tools
+
+### Instalar kernel de Jupyter
+#install-smn-kernel
