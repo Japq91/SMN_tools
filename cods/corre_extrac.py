@@ -16,9 +16,7 @@ cache_dir = os.path.join(BASE_DIR, "../cfgrib_cache")
 os.makedirs(cache_dir, exist_ok=True)
 os.environ["GRIB_INDEX_DIR"] = cache_dir
 #
-#r0 = '/scratch/Datatemporal/SMN/data/regional' # Ruta de datos iniciales por modelo
-#
-r0 = str(sys.argv[1]) ## Ruta de datos iniciales por modelo
+grib = str(sys.argv[1]) ## Ruta de datos iniciales por modelo
 model = str(sys.argv[2]) # "PERU_WRF22" #"PERU_ETA22" #"PERU_WRF22"
 fecha = str(sys.argv[3]) # formato YYYYMMDD
 hor = "%02d"%int(sys.argv[4]) #formato HH
@@ -27,20 +25,20 @@ outdir='%s/%s'%(r_out,model)
 os.system(f"mkdir -p {outdir}")
 clean_outdir(outdir)
 
-dia = "%s"%fecha[6:]
-mes = "%s"%fecha[4:6]
-yea = "%s"%fecha[:4]
+#dia = "%s"%fecha[6:]
+#mes = "%s"%fecha[4:6]
+#yea = "%s"%fecha[:4]
 print('comienza python')
-print(yea,mes,dia, hor, model)
-
+#print(yea,mes,dia, hor, model)
+print(f"{fecha}{hor}",model)
 # '''
 ##########################################################################
 
 if "ETA" in model: 
-    grib = f'{r0}/{model}/{yea}/{yea}{mes}/{yea}{mes}{dia}{hor}'
+    #grib = f'{r0}/{model}/{yea}/{yea}{mes}/{yea}{mes}{dia}{hor}'
     files_pro=gb('%s/latlon_*'%grib)
 elif "WRF" in model: 
-    grib = f'{r0}/{model}/{yea}{mes}/{yea}{mes}{dia}{hor}'
+    #grib = f'{r0}/{model}/{yea}{mes}/{yea}{mes}{dia}{hor}'
     files_pro=gb('%s/WRFPRS_*'%grib)
 else: 
     print('model GFS??')
@@ -89,7 +87,7 @@ run_dir = os.path.join(os.path.dirname(outdir), f"{hor}Z")
 os.makedirs(run_dir, exist_ok=True)
 
 # Fecha y hora del run
-fecha_hor = f"{yea}{mes}{dia}{hor}"
+fecha_hor = f"{fecha}{hor}" #f"{yea}{mes}{dia}{hor}"
 
 for var_in in ['prs', 'sfc'][:]:
     files_variables = gb(f"{outdir}/{var_in}_*")
