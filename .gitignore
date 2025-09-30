@@ -2,6 +2,8 @@
 cfgrib_cache/
 cods/figuras/
 #lista
+requirements.txt
+setup.py
 # Ignorar carpeta "antes" dentro del paquete
 src/SMN_tools/antes/
 # Ignorar entornos virtuales
