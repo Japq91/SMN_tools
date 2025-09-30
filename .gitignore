@@ -1,3 +1,4 @@
+.gitignore
 #data/
 cfgrib_cache/
 cods/figuras/
@@ -18,6 +19,7 @@ data/out/
 src/SMN_tools/.ipynb_checkpoints/
 .ipynb_checkpoints/
 cods/.ipynb_checkpoints/
+cods/*.ipynb
 # Python cache files
 *.py[cod]
 *.class
