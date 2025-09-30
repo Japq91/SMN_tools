@@ -65,32 +65,7 @@ Kernel → Change Kernel → Python (smn_tools) # una  vez dentro de jupyter
 
 Realizando esta modificación se podrá usar las librerías del entorno virtual donde instalaste **SMN_tools**.
 
----
-## Diagrama de la estructura del proyecto
 
-```mermaid
-flowchart TB
-    A[SMN_tools/] --> B[Configuracion]
-    A --> C[cods]
-    A --> D[stats]
-    A --> E[data]
-    A --> F[src]
-    A --> G[SMN_tools.egg-info]
-
-    B --> B1[pyproject.toml, environment.yml, requirements.txt, Makefile]
-
-    C --> C1[scripts de extraccion]
-
-    D --> D1[cods scripts metricas]
-    D --> D2[data]
-    D --> D3[observado]
-    D --> D4[recortado]
-    D --> D5[metrics_out]
-    D --> D6[figuras]
-
-    F --> F1[SMN_tools/ modulo principal]
-
-```
 ## Estructura del proyecto
 
 ```
